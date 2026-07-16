@@ -94,14 +94,42 @@ namespace AerialWindows
 
                 context.Response.StatusCode = (int)response.StatusCode;
 
-                // Copy headers
+                // Copy headers safely
                 foreach (var header in response.Headers)
                 {
-                    context.Response.Headers[header.Key] = string.Join(", ", header.Value);
+                    try
+                    {
+                        context.Response.Headers[header.Key] = string.Join(", ", header.Value);
+                    }
+                    catch
+                    {
+                        // Ignore restricted headers
+                    }
                 }
                 foreach (var header in response.Content.Headers)
                 {
-                    context.Response.Headers[header.Key] = string.Join(", ", header.Value);
+                    try
+                    {
+                        if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+                        {
+                            context.Response.ContentType = string.Join(", ", header.Value);
+                        }
+                        else if (header.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (long.TryParse(string.Join("", header.Value), out long len))
+                            {
+                                context.Response.ContentLength64 = len;
+                            }
+                        }
+                        else
+                        {
+                            context.Response.Headers[header.Key] = string.Join(", ", header.Value);
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore restricted headers
+                    }
                 }
 
                 // Copy body stream
