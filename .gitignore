@@ -1,0 +1,16 @@
+# Compile outputs
+bin/
+obj/
+
+# IDE files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# App local outputs/logs
+*.log
+log.txt
+strings.json
+videos.json

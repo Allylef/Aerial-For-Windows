@@ -1,0 +1,745 @@
+<Window x:Class="AerialWindows.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AerialWindows"
+        mc:Ignorable="d"
+        Title="Aerial Windows Settings" Height="700" Width="950"
+        WindowStartupLocation="CenterScreen" Background="#12141A" 
+        AllowsTransparency="False" WindowStyle="ThreeDBorderWindow" Icon="/logo.png"
+        Foreground="#F3F4F6" FontFamily="Segoe UI, Inter, Arial">
+    
+    <Window.Resources>
+        <!-- Color Palette -->
+        <SolidColorBrush x:Key="BgDark" Color="#12141A"/>
+        <SolidColorBrush x:Key="BgCard" Color="#1E222B"/>
+        <SolidColorBrush x:Key="BgHover" Color="#2A303D"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#2E3440"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#6366F1"/>
+        <SolidColorBrush x:Key="AccentHover" Color="#4F46E5"/>
+        <SolidColorBrush x:Key="TextPrimary" Color="#F3F4F6"/>
+        <SolidColorBrush x:Key="TextSecondary" Color="#9CA3AF"/>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <!-- Premium Button Style -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="6" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="#3730A3"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="border" Property="Background" Value="#2E3440"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6" SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BgHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="#1E222B"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2E3440"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Custom TabItem / ListBoxItem Style for Sidebar -->
+        <Style x:Key="SidebarItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderThickness="4,0,0,0" BorderBrush="Transparent" SnapsToDevicePixels="true">
+                            <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BgHover}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BgCard}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{DynamicResource BgDark}">
+        <Grid.RowDefinitions>
+            <!-- Title Bar -->
+            <RowDefinition Height="75"/>
+            <!-- Content -->
+            <RowDefinition Height="*"/>
+            <!-- Footer Buttons -->
+            <RowDefinition Height="65"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="25,0">
+            <Grid VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/logo.png" Width="40" Height="40" Margin="0,0,12,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBlock Text="AERIAL WINDOWS" FontSize="20" FontWeight="ExtraBold" Foreground="{DynamicResource TextPrimary}"/>
+                        <TextBlock Text="Cinematic Apple TV Screensaver for Windows" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Button x:Name="BtnUpdateManifests" Content="Update Video Manifests" HorizontalAlignment="Right" Style="{StaticResource SecondaryButton}" Click="BtnUpdateManifests_Click" Padding="12,6"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Body Grid -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Sidebar Menu -->
+                <ColumnDefinition Width="200"/>
+                <!-- Vertical Divider -->
+                <ColumnDefinition Width="1"/>
+                <!-- Tab Contents -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar -->
+            <ListBox x:Name="SidebarMenu" Grid.Column="0" BorderThickness="0" Background="Transparent" 
+                     ItemContainerStyle="{StaticResource SidebarItemStyle}" Margin="0,15" SelectionChanged="SidebarMenu_SelectionChanged">
+                <ListBoxItem Content="Videos" IsSelected="True"/>
+                <ListBoxItem Content="Display Overlays"/>
+                <ListBoxItem Content="Cache &amp; Formats"/>
+            </ListBox>
+
+            <!-- Divider -->
+            <Border Grid.Column="1" Background="{DynamicResource BorderBrush}"/>
+
+            <!-- Tab Content Display Area (Replaced TabControl to remove redundant top header) -->
+            <Grid Grid.Column="2">
+                
+                <!-- PAGE 1: Videos Playlist -->
+                <Grid x:Name="PageVideos" Visibility="Visible" Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="280"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left side: TreeView / Video list -->
+                    <Grid Grid.Column="0" Margin="0,0,15,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Video list header with Select / Deselect All options -->
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Select Videos to Include in Rotation" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button x:Name="BtnSelectAll" Content="Select All" Click="BtnSelectAll_Click" Style="{StaticResource SecondaryButton}" Padding="8,4" FontSize="11" Margin="0,0,8,0"/>
+                                <Button x:Name="BtnDeselectAll" Content="Deselect All" Click="BtnDeselectAll_Click" Style="{StaticResource SecondaryButton}" Padding="8,4" FontSize="11"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <Border Grid.Row="1" Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+                            <TreeView x:Name="VideosTreeView" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource TextPrimary}" Margin="10" SelectedItemChanged="VideosTreeView_SelectedItemChanged">
+                                <TreeView.ItemContainerStyle>
+                                    <Style TargetType="TreeViewItem">
+                                        <Setter Property="IsExpanded" Value="False"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+                                        <Setter Property="Margin" Value="2"/>
+                                    </Style>
+                                </TreeView.ItemContainerStyle>
+                            </TreeView>
+                        </Border>
+
+                        <!-- Custom Streams Expandable Panel -->
+                        <Border Grid.Row="2" Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,15,0,0">
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox x:Name="ChkUseCustomUrls" Content="Play Custom Video Streams Instead of Apple Aerials" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,8"/>
+                                
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="TxtCustomUrl" Height="28" VerticalContentAlignment="Center" Margin="0,0,10,0" ToolTip="Paste direct video URL (mp4/mov/m3u8/etc.)"/>
+                                    <Button Content="Add Stream URL" Grid.Column="1" Style="{StaticResource PrimaryButton}" Padding="12,0" Height="28" Click="BtnAddCustomUrl_Click"/>
+                                </Grid>
+
+                                <TextBlock Text="Configured Custom Stream URLs:" FontSize="11" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="{DynamicResource TextSecondary}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ListBox x:Name="ListCustomUrls" Height="70" Background="#12141A" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Foreground="{DynamicResource TextPrimary}" Margin="0,0,10,0"/>
+                                    <Button Content="Remove" Grid.Column="1" Style="{StaticResource SecondaryButton}" Foreground="#EF4444" BorderBrush="#EF4444" Click="BtnRemoveCustomUrl_Click" Padding="10,0" Height="28" VerticalAlignment="Top"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Right side: Video Details and Actions -->
+                    <Border Grid.Column="1" Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Selected Asset" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,15"/>
+
+                            <StackPanel Grid.Row="1" Orientation="Vertical">
+                                <TextBlock x:Name="TxtVideoName" Text="No Video Selected" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" Foreground="{StaticResource AccentColor}"/>
+                                <TextBlock x:Name="TxtVideoDesc" Text="Select a video from the list on the left to view details and options." TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextSecondary}" Margin="0,8,0,0"/>
+                                
+                                <StackPanel x:Name="VideoDetailsPanel" Margin="0,20,0,0" Visibility="Collapsed">
+                                    <TextBlock Text="Category/Scene:" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}"/>
+                                    <TextBlock x:Name="TxtVideoScene" Text="Nature" FontSize="12" Margin="0,2,0,12" FontWeight="SemiBold"/>
+
+                                    <TextBlock Text="Local Cache Status:" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondary}"/>
+                                    <TextBlock x:Name="TxtCacheStatus" Text="Not Cached (Will Stream)" FontSize="12" Margin="0,2,0,15" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Orientation="Vertical">
+                                 <Button x:Name="BtnPreviewVideo" Content="Preview in Player" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Stretch" Click="BtnPreviewVideo_Click" IsEnabled="False" Margin="0,0,0,8"/>
+                                 <Button x:Name="BtnDownloadVideo" Content="Download/Cache Video" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Stretch" Click="BtnDownloadVideo_Click" IsEnabled="False" Padding="0,10"/>
+                                 <Button x:Name="BtnDownloadAllChecked" Content="Download All Checked" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Stretch" Click="BtnDownloadAllChecked_Click" Margin="0,8,0,0" Padding="0,10"/>
+                             </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- PAGE 2: Display Overlays -->
+                <Grid x:Name="PageOverlays" Visibility="Collapsed" Margin="20">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Customize Text and Data Overlays" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,20"/>
+
+                            <!-- Clock Overlay Card -->
+                            <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                                <StackPanel Orientation="Vertical">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <CheckBox x:Name="ChkShowClock" Content="Show Clock overlay" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,5"/>
+                                            <TextBlock Text="Displays the local date and time on screen" FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                                <TextBlock Text="Position" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <ComboBox x:Name="ComboClockPos" Width="100" Height="26"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="Font Size" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <TextBox x:Name="TxtClockSize" Width="50" Height="26" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="OverlaySettingChanged"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Clock Typography & Color Row -->
+                                    <Grid Margin="0,15,0,0" Visibility="{Binding IsChecked, ElementName=ChkShowClock, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                            <TextBlock Text="Font Family" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <ComboBox x:Name="ComboClockFont" Height="28" VerticalContentAlignment="Center" SelectionChanged="OverlaySettingChanged"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,0">
+                                            <TextBlock Text="Font Color" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border x:Name="BorderClockColor" Width="24" Height="24" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,8,0" Background="White"/>
+                                                <TextBox x:Name="TxtClockColor" Grid.Column="1" Height="26" VerticalContentAlignment="Center" Text="#FFFFFF" TextChanged="ColorHexChanged" Margin="0,0,8,0"/>
+                                                <Button Content="Choose..." Grid.Column="2" Click="BtnChooseClockColor_Click" Style="{StaticResource SecondaryButton}" Padding="10,2" Height="26"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Clock Preview Section -->
+                                    <Border Background="#12141A" Padding="10" Margin="0,15,0,0" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"
+                                            Visibility="{Binding IsChecked, ElementName=ChkShowClock, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Preview" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,5"/>
+                                            <TextBlock x:Name="LblClockPreview" Text="12:34 PM" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Location Overlay Card -->
+                            <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                                <StackPanel Orientation="Vertical">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <CheckBox x:Name="ChkShowLocation" Content="Show Location description (Points of Interest)" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,5"/>
+                                            <TextBlock Text="Displays descriptions of what is being shown (fades in and out)" FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                                <TextBlock Text="Position" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <ComboBox x:Name="ComboLocationPos" Width="100" Height="26"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="Font Size" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <TextBox x:Name="TxtLocationSize" Width="50" Height="26" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="OverlaySettingChanged"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Location Typography & Color Row -->
+                                    <Grid Margin="0,15,0,0" Visibility="{Binding IsChecked, ElementName=ChkShowLocation, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                            <TextBlock Text="Font Family" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <ComboBox x:Name="ComboLocationFont" Height="28" VerticalContentAlignment="Center" SelectionChanged="OverlaySettingChanged"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,0">
+                                            <TextBlock Text="Font Color" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border x:Name="BorderLocationColor" Width="24" Height="24" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,8,0" Background="White"/>
+                                                <TextBox x:Name="TxtLocationColor" Grid.Column="1" Height="26" VerticalContentAlignment="Center" Text="#FFFFFF" TextChanged="ColorHexChanged" Margin="0,0,8,0"/>
+                                                <Button Content="Choose..." Grid.Column="2" Click="BtnChooseLocationColor_Click" Style="{StaticResource SecondaryButton}" Padding="10,2" Height="26"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Location Preview Section -->
+                                    <Border Background="#12141A" Padding="10" Margin="0,15,0,0" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"
+                                            Visibility="{Binding IsChecked, ElementName=ChkShowLocation, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Preview" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,5"/>
+                                            <TextBlock x:Name="LblLocationPreview" Text="San Francisco, California" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Weather Overlay Card -->
+                            <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                                <StackPanel Orientation="Vertical">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <CheckBox x:Name="ChkShowWeather" Content="Show Weather info" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,5"/>
+                                            <TextBlock Text="Pulls live weather updates using OpenWeatherMap" FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                                <TextBlock Text="Position" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <ComboBox x:Name="ComboWeatherPos" Width="100" Height="26"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="Font Size" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <TextBox x:Name="TxtWeatherSize" Width="50" Height="26" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="OverlaySettingChanged"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Weather Specific Settings -->
+                                    <StackPanel Orientation="Vertical" Margin="0,15,0,0" 
+                                                Visibility="{Binding IsChecked, ElementName=ChkShowWeather, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="1.5*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                                <TextBlock Text="Weather Location (City Name, Country Code)" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <TextBox x:Name="TxtWeatherLocation" Height="26" VerticalContentAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,0">
+                                                <TextBlock Text="OpenWeatherMap API Key (Required for weather)" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <TextBox x:Name="TxtWeatherApiKey" Height="26" VerticalContentAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- Weather Typography & Color Row -->
+                                    <Grid Margin="0,15,0,0" Visibility="{Binding IsChecked, ElementName=ChkShowWeather, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                            <TextBlock Text="Font Family" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <ComboBox x:Name="ComboWeatherFont" Height="28" VerticalContentAlignment="Center" SelectionChanged="OverlaySettingChanged"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,0">
+                                            <TextBlock Text="Font Color" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border x:Name="BorderWeatherColor" Width="24" Height="24" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,8,0" Background="White"/>
+                                                <TextBox x:Name="TxtWeatherColor" Grid.Column="1" Height="26" VerticalContentAlignment="Center" Text="#FFFFFF" TextChanged="ColorHexChanged" Margin="0,0,8,0"/>
+                                                <Button Content="Choose..." Grid.Column="2" Click="BtnChooseWeatherColor_Click" Style="{StaticResource SecondaryButton}" Padding="10,2" Height="26"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Weather Preview Section -->
+                                    <Border Background="#12141A" Padding="10" Margin="0,15,0,0" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"
+                                            Visibility="{Binding IsChecked, ElementName=ChkShowWeather, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Preview" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,5"/>
+                                            <TextBlock x:Name="LblWeatherPreview" Text="72°F, Partly Cloudy" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Now Playing Card -->
+                            <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                                <StackPanel Orientation="Vertical">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <CheckBox x:Name="ChkShowNowPlaying" Content="Show Music 'Now Playing' overlay" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,5"/>
+                                            <TextBlock Text="Displays active music track information from Spotify, iTunes, etc." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                                <TextBlock Text="Position" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <ComboBox x:Name="ComboNowPlayingPos" Width="100" Height="26"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="Font Size" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                                <TextBox x:Name="TxtNowPlayingSize" Width="50" Height="26" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="OverlaySettingChanged"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Now Playing Typography & Color Row -->
+                                    <Grid Margin="0,15,0,0" Visibility="{Binding IsChecked, ElementName=ChkShowNowPlaying, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                            <TextBlock Text="Font Family" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <ComboBox x:Name="ComboNowPlayingFont" Height="28" VerticalContentAlignment="Center" SelectionChanged="OverlaySettingChanged"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,0,0">
+                                            <TextBlock Text="Font Color" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border x:Name="BorderNowPlayingColor" Width="24" Height="24" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}" Margin="0,0,8,0" Background="White"/>
+                                                <TextBox x:Name="TxtNowPlayingColor" Grid.Column="1" Height="26" VerticalContentAlignment="Center" Text="#FFFFFF" TextChanged="ColorHexChanged" Margin="0,0,8,0"/>
+                                                <Button Content="Choose..." Grid.Column="2" Click="BtnChooseNowPlayingColor_Click" Style="{StaticResource SecondaryButton}" Padding="10,2" Height="26"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Now Playing Preview Section -->
+                                    <Border Background="#12141A" Padding="10" Margin="0,15,0,0" CornerRadius="4" BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}"
+                                            Visibility="{Binding IsChecked, ElementName=ChkShowNowPlaying, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Preview" FontSize="10" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,5"/>
+                                            <TextBlock x:Name="LblNowPlayingPreview" Text="🎵 Moonlight Sonata - Beethoven" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- PAGE 3: Cache & General Options -->
+                <Grid x:Name="PageCache" Visibility="Collapsed" Margin="20">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="System and Video Playback Settings" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,20"/>
+
+                        <!-- Playback Formats Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Preferred Video Quality" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Selects the streaming/caching resolution. Default is 1080p H.264." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                </StackPanel>
+                                <ComboBox x:Name="ComboPreferredFormat" Grid.Column="1" Height="30" VerticalContentAlignment="Center">
+                                    <ComboBoxItem Content="1080p H.264" Tag="v1080pH264"/>
+                                    <ComboBoxItem Content="1080p HEVC" Tag="v1080pHEVC"/>
+                                    <ComboBoxItem Content="1080p HDR" Tag="v1080pHDR"/>
+                                    <ComboBoxItem Content="4K HEVC" Tag="v4KHEVC"/>
+                                    <ComboBoxItem Content="4K HDR" Tag="v4KHDR"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- Playback Speed Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Playback Speed" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Adjusts the speed of the screensaver video playback." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                </StackPanel>
+                                <ComboBox x:Name="ComboPlaybackSpeed" Grid.Column="1" Height="30" VerticalContentAlignment="Center">
+                                    <ComboBoxItem Content="0.5x (Slow)" Tag="0.5"/>
+                                    <ComboBoxItem Content="0.75x" Tag="0.75"/>
+                                    <ComboBoxItem Content="1.0x (Normal)" Tag="1.0"/>
+                                    <ComboBoxItem Content="1.25x" Tag="1.25"/>
+                                    <ComboBoxItem Content="1.5x (Fast)" Tag="1.5"/>
+                                    <ComboBoxItem Content="2.0x" Tag="2.0"/>
+                                    <ComboBoxItem Content="3.0x" Tag="3.0"/>
+                                    <ComboBoxItem Content="4.0x" Tag="4.0"/>
+                                    <ComboBoxItem Content="5.0x" Tag="5.0"/>
+                                    <ComboBoxItem Content="6.0x (Very Fast)" Tag="6.0"/>
+                                    <ComboBoxItem Content="8.0x" Tag="8.0"/>
+                                    <ComboBoxItem Content="10.0x (Maximum)" Tag="10.0"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- Video Zoom Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Video Zoom / Crop Factor" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Slightly scales up the video to eliminate potential border issues or screen bezels." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Slider x:Name="SliderVideoZoom" Width="130" Minimum="100" Maximum="120" SmallChange="1" LargeChange="5" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <TextBlock x:Name="TxtVideoZoomVal" Text="100%" Width="45" FontSize="12" Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center" TextAlignment="Right"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- App Theme Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="App Theme" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Choose between Light, Dark, or matching your Windows System theme." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                </StackPanel>
+                                <ComboBox x:Name="ComboAppTheme" Grid.Column="1" Height="30" VerticalContentAlignment="Center" SelectionChanged="ComboAppTheme_SelectionChanged">
+                                    <ComboBoxItem Content="Dark" Tag="Dark"/>
+                                    <ComboBoxItem Content="Light" Tag="Light"/>
+                                    <ComboBoxItem Content="System Theme" Tag="System"/>
+                                </ComboBox>
+                            </Grid>
+                        </Border>
+
+                        <!-- Caching Options Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,0,0,20">
+                            <StackPanel Orientation="Vertical">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Vertical">
+                                        <CheckBox x:Name="ChkEnableCaching" Content="Cache Videos Locally" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,5"/>
+                                        <TextBlock Text="Downloads video files to disk. If disabled, videos stream from Apple servers." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Caching details (only if enabled) -->
+                                <StackPanel Orientation="Vertical" Visibility="{Binding IsChecked, ElementName=ChkEnableCaching, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Separator Background="{DynamicResource BorderBrush}" Margin="0,12"/>
+                                    
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Cache Folder Path" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <TextBlock x:Name="TxtCacheFolder" Text="C:\..." FontSize="12" Foreground="{DynamicResource TextPrimary}"/>
+                                        </StackPanel>
+                                        <Button Content="Change Folder" Grid.Column="1" Style="{StaticResource SecondaryButton}" VerticalAlignment="Center" Click="BtnChangeCacheFolder_Click" Padding="12,5"/>
+                                    </Grid>
+
+                                    <Grid Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Maximum Cache Size Limit" FontSize="11" Foreground="{DynamicResource TextSecondary}" Margin="0,0,0,4"/>
+                                            <Slider x:Name="SliderCacheLimit" Minimum="5" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Width="300" HorizontalAlignment="Left"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="TxtCacheLimitVal" Grid.Column="1" Text="20 GB" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <Separator Background="{DynamicResource BorderBrush}" Margin="0,12"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Current Cache Usage" FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                            <TextBlock x:Name="TxtCurrentCacheUsage" Text="0.00 GB used" FontSize="14" FontWeight="Bold" Foreground="{StaticResource AccentColor}"/>
+                                        </StackPanel>
+                                        <Button Content="Clear All Cache" Grid.Column="1" Style="{StaticResource SecondaryButton}" Foreground="#EF4444" BorderBrush="#EF4444" Click="BtnClearCache_Click" VerticalAlignment="Center" Padding="12,5"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Multi Monitor Options Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical">
+                                    <CheckBox x:Name="ChkMultiMonitor" Content="Play a different video on each monitor" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Enables random unique video playbacks per screen. Otherwise plays the same video on all screens." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Advanced / SSL Options Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,20,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical">
+                                    <CheckBox x:Name="ChkBypassSsl" Content="Bypass SSL Certificate Validation &amp; Revocation" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" VerticalContentAlignment="Center" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Bypasses SSL chain verification and sets up a local loopback server. Prevents security alerts and is useful behind corporate proxies." FontSize="11" Foreground="{DynamicResource TextSecondary}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Instant Play Shortcut Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,20,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                    <TextBlock Text="Instant Screensaver Shortcut" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Creates an instant-launch shortcut on your Desktop. To set a global hotkey (like Ctrl+Alt+S): Right-click the desktop shortcut -> Properties -> click in the 'Shortcut key' box, press your keys, and click Save." FontSize="11" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Button Content="Create Desktop Shortcut" Grid.Column="1" Style="{StaticResource SecondaryButton}" VerticalAlignment="Center" Click="BtnCreateShortcut_Click" Padding="12,5"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="25,0">
+            <Grid>
+                <!-- Status bar updates -->
+                <TextBlock x:Name="TxtStatus" Text="Ready" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="{DynamicResource TextSecondary}"/>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Click="BtnCancel_Click" Margin="0,0,10,0"/>
+                    <Button Content="Save Settings" Style="{StaticResource PrimaryButton}" Click="BtnSave_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+
