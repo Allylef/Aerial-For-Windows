@@ -10,19 +10,6 @@
 
 ---
 
-## ⬇️ Download
-
-Download the latest pre-compiled, self-contained release files directly from the repository:
-
-| File | Description | Download Link |
-| :--- | :--- | :--- |
-| **`AerialWindows.scr`** | Recommended Windows Screensaver file (Right-click -> **Install**). | [📥 Download AerialWindows.scr](https://github.com/Allylef/Aerial-For-Windows/raw/main/AerialWindows.scr) |
-| **`AerialWindows.exe`** | Standalone Executable (Double-click to run anywhere). | [📥 Download AerialWindows.exe](https://github.com/Allylef/Aerial-For-Windows/raw/main/AerialWindows.exe) |
-
-> **Note:** Both files are completely self-contained single-file binaries. No external .NET runtime installation is required!
-
----
-
 ## ✨ Features & Highlights
 
 ### 🎬 Video Libraries & Streaming
@@ -110,6 +97,17 @@ The published output directory will contain:
 1. Download [`AerialWindows.scr`](https://github.com/Allylef/Aerial-For-Windows/raw/main/AerialWindows.scr) directly from the **[Download Section](#%EF%B8%8F-download)**.
 2. **Right-click** `AerialWindows.scr` and select **Install**.
 3. Windows will open the *Screen Saver Settings* dialog with Aerial selected. Set your idle time and click **OK**!
+
+## ⬇️ Download
+
+Download the latest pre-compiled, self-contained release files directly from the repository:
+
+| File | Description | Download Link |
+| :--- | :--- | :--- |
+| **`AerialWindows.scr`** | Recommended Windows Screensaver file (Right-click -> **Install**). | [📥 Download AerialWindows.scr](https://github.com/Allylef/Aerial-For-Windows/raw/main/AerialWindows.scr) |
+| **`AerialWindows.exe`** | Standalone Executable (Double-click to run anywhere). | [📥 Download AerialWindows.exe](https://github.com/Allylef/Aerial-For-Windows/raw/main/AerialWindows.exe) |
+
+> **Note:** Both files are completely self-contained single-file binaries. No external .NET runtime installation is required!
 
 ---
 
