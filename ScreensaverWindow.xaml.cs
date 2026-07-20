@@ -224,13 +224,19 @@ namespace AerialWindows
 
         private void ParsePointsOfInterest()
         {
+            _poiList.Clear();
             if (_video.PointsOfInterest == null) return;
 
             foreach (var kvp in _video.PointsOfInterest)
             {
                 if (double.TryParse(kvp.Key, out double seconds))
                 {
-                    _poiList.Add((seconds, kvp.Value));
+                    string val = kvp.Value ?? "";
+                    // Only accept POI text if it is a clean, human-readable description (not a raw key with underscores)
+                    if (!string.IsNullOrWhiteSpace(val) && !val.Contains("_") && !val.EndsWith("_NAME", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _poiList.Add((seconds, val));
+                    }
                 }
             }
             // Sort by playback timestamp
@@ -310,6 +316,12 @@ namespace AerialWindows
                 var locBrush = SafeGetBrush(_settings.LocationFontColor);
 
                 string displayLocation = !string.IsNullOrEmpty(_video.SecondaryName) ? _video.SecondaryName : _video.Name;
+                if (displayLocation.EndsWith("_NAME", StringComparison.OrdinalIgnoreCase) || displayLocation.Contains("_A0") || displayLocation.Contains("_C0"))
+                {
+                    displayLocation = "Aerial Video";
+                }
+
+                _currentPoiText = displayLocation;
 
                 _locationText = new TextBlock
                 {
@@ -444,6 +456,10 @@ namespace AerialWindows
             if (_locationText != null)
             {
                 string baseLocation = !string.IsNullOrEmpty(_video.SecondaryName) ? _video.SecondaryName : _video.Name;
+                if (baseLocation.EndsWith("_NAME", StringComparison.OrdinalIgnoreCase) || baseLocation.Contains("_A0") || baseLocation.Contains("_C0"))
+                {
+                    baseLocation = "Aerial Video";
+                }
                 string targetText = baseLocation;
 
                 if (_poiList.Count > 0)
