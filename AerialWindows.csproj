@@ -17,4 +17,8 @@
     <PackageReference Include="YoutubeExplode" Version="6.6.0" />
   </ItemGroup>
 
+  <Target Name="CopyScrOnPublish" AfterTargets="Publish">
+    <Copy SourceFiles="$(PublishDir)AerialWindows.exe" DestinationFiles="$(PublishDir)AerialWindows.scr" />
+  </Target>
+
 </Project>
