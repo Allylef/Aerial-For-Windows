@@ -84,9 +84,10 @@ namespace AerialWindows
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
 
                 // Forward Range header if present
-                if (context.Request.Headers["Range"] != null)
+                string? rangeHeader = context.Request.Headers["Range"];
+                if (!string.IsNullOrEmpty(rangeHeader))
                 {
-                    request.Headers.Add("Range", context.Request.Headers["Range"]);
+                    request.Headers.TryAddWithoutValidation("Range", rangeHeader);
                 }
 
                 // Send request using bypassing HTTP client
@@ -140,7 +141,7 @@ namespace AerialWindows
             }
             catch (Exception ex)
             {
-                App.Log($"Error handling proxy request: {ex.Message}");
+                App.Log($"Error handling proxy request: {ex.Message}\n{ex.StackTrace}");
             }
             finally
             {
