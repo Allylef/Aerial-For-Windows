@@ -304,20 +304,23 @@ namespace AerialWindows
             }
 
             // LOCATION / POI OVERLAY
-            if (_settings.ShowLocationPOI && _poiList.Count > 0)
+            if (_settings.ShowLocationPOI)
             {
                 var locFont = SafeGetFontFamily(_settings.LocationFontFamily);
                 var locBrush = SafeGetBrush(_settings.LocationFontColor);
 
+                string displayLocation = !string.IsNullOrEmpty(_video.SecondaryName) ? _video.SecondaryName : _video.Name;
+
                 _locationText = new TextBlock
                 {
+                    Text = displayLocation,
                     FontSize = _settings.LocationFontSize,
                     FontWeight = FontWeights.SemiBold,
                     FontFamily = locFont,
                     Foreground = locBrush,
                     TextWrapping = TextWrapping.Wrap,
                     MaxWidth = 600,
-                    Opacity = 0, // Hidden until active timestamp
+                    Opacity = 1.0, // Permanently visible
                     Effect = (System.Windows.Media.Effects.DropShadowEffect)Resources["TextShadow"]
                 };
 
@@ -438,28 +441,27 @@ namespace AerialWindows
             }
 
             // Update Location POI based on player position
-            if (_locationText != null && _poiList.Count > 0)
+            if (_locationText != null)
             {
-                double currentSecs = Player.Position.TotalSeconds;
-                
-                // Find matching POI
-                string targetPoi = "";
-                foreach (var poi in _poiList)
+                string baseLocation = !string.IsNullOrEmpty(_video.SecondaryName) ? _video.SecondaryName : _video.Name;
+                string targetText = baseLocation;
+
+                if (_poiList.Count > 0)
                 {
-                    if (currentSecs >= poi.Time)
+                    double currentSecs = Player.Position.TotalSeconds;
+                    foreach (var poi in _poiList)
                     {
-                        // Keep displaying it until next POI or for 12 seconds
-                        if (currentSecs - poi.Time < 12)
+                        if (currentSecs >= poi.Time)
                         {
-                            targetPoi = poi.Text;
+                            targetText = poi.Text;
                         }
                     }
                 }
 
-                if (_currentPoiText != targetPoi)
+                if (_currentPoiText != targetText)
                 {
-                    _currentPoiText = targetPoi;
-                    FadePoiText(targetPoi);
+                    _currentPoiText = targetText;
+                    FadePoiText(targetText);
                 }
             }
         }
@@ -468,18 +470,11 @@ namespace AerialWindows
         {
             if (_locationText == null) return;
 
-            var fadeOut = new DoubleAnimation(0, TimeSpan.FromSeconds(1.5));
+            var fadeOut = new DoubleAnimation(0, TimeSpan.FromSeconds(1.0));
             fadeOut.Completed += (s, e) => {
-                if (!string.IsNullOrEmpty(newText))
-                {
-                    _locationText.Text = newText;
-                    var fadeIn = new DoubleAnimation(1, TimeSpan.FromSeconds(1.5));
-                    _locationText.BeginAnimation(OpacityProperty, fadeIn);
-                }
-                else
-                {
-                    _locationText.Text = "";
-                }
+                _locationText.Text = newText;
+                var fadeIn = new DoubleAnimation(1, TimeSpan.FromSeconds(1.0));
+                _locationText.BeginAnimation(OpacityProperty, fadeIn);
             };
             _locationText.BeginAnimation(OpacityProperty, fadeOut);
         }
@@ -732,6 +727,12 @@ namespace AerialWindows
                     // Reset overlay state
                     _poiList.Clear();
                     ParsePointsOfInterest();
+                    if (_locationText != null)
+                    {
+                        string displayLoc = !string.IsNullOrEmpty(_video.SecondaryName) ? _video.SecondaryName : _video.Name;
+                        _locationText.Text = displayLoc;
+                        _locationText.Opacity = 1.0;
+                    }
                     
                     // Reset grace period start time
                     _startTime = DateTime.Now;
