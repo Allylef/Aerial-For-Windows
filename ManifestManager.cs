@@ -29,15 +29,6 @@ namespace AerialWindows
         {
             try
             {
-                if (File.Exists(VideosCachePath))
-                {
-                    string json = File.ReadAllText(VideosCachePath);
-                    var list = JsonSerializer.Deserialize<List<AerialVideo>>(json);
-                    if (list != null)
-                    {
-                        Videos = list;
-                    }
-                }
                 if (File.Exists(StringsCachePath))
                 {
                     string json = File.ReadAllText(StringsCachePath);
@@ -45,6 +36,29 @@ namespace AerialWindows
                     if (dict != null)
                     {
                         Translations = dict;
+                    }
+                }
+                if (File.Exists(VideosCachePath))
+                {
+                    string json = File.ReadAllText(VideosCachePath);
+                    var list = JsonSerializer.Deserialize<List<AerialVideo>>(json);
+                    if (list != null)
+                    {
+                        foreach (var v in list)
+                        {
+                            if (Translations.TryGetValue(v.Name, out var translated))
+                            {
+                                v.Name = translated;
+                            }
+                            else if (v.Name.EndsWith("_NAME", StringComparison.OrdinalIgnoreCase) || v.Name.Contains("_A0") || v.Name.Contains("_C0"))
+                            {
+                                if (!string.IsNullOrEmpty(v.SecondaryName))
+                                {
+                                    v.Name = v.SecondaryName;
+                                }
+                            }
+                        }
+                        Videos = list;
                     }
                 }
             }
@@ -184,10 +198,17 @@ namespace AerialWindows
                                         {
                                             if (allVideos.ContainsKey(asset.Id)) continue;
 
+                                            string rawTitle = asset.Title ?? "";
+                                            string name = Translate(rawTitle, newTranslations);
+                                            if (string.IsNullOrEmpty(name) || name == rawTitle)
+                                            {
+                                                name = !string.IsNullOrEmpty(asset.AccessibilityLabel) ? asset.AccessibilityLabel : (rawTitle != "" ? rawTitle : "Aerial Video");
+                                            }
+
                                             var video = new AerialVideo
                                             {
                                                 Id = asset.Id,
-                                                Name = asset.Title ?? asset.AccessibilityLabel,
+                                                Name = name,
                                                 SecondaryName = asset.AccessibilityLabel,
                                                 Type = asset.Type ?? "video",
                                                 TimeOfDay = asset.TimeOfDay ?? "day",

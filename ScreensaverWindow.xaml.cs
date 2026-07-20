@@ -486,27 +486,59 @@ namespace AerialWindows
 
         private async Task FetchWeatherAsync()
         {
+            if (string.IsNullOrWhiteSpace(_settings.WeatherApiKey) || string.IsNullOrWhiteSpace(_settings.WeatherLocation))
+                return;
+
             try
             {
                 var client = HttpClientFactory.GetClient(_settings.BypassSslValidation);
                 string protocol = _settings.BypassSslValidation ? "http" : "https";
-                string url = $"{protocol}://api.openweathermap.org/data/2.5/weather?q={Uri.EscapeDataString(_settings.WeatherLocation)}&appid={_settings.WeatherApiKey}&units=imperial";
-                string json = await client.GetStringAsync(url);
-                var doc = JsonDocument.Parse(json);
-                    
-                    double temp = doc.RootElement.GetProperty("main").GetProperty("temp").GetDouble();
-                    string desc = doc.RootElement.GetProperty("weather")[0].GetProperty("main").GetString() ?? "";
 
-                    Dispatcher.Invoke(() => {
-                        if (_weatherText != null && _weatherPanel != null)
-                        {
-                            _weatherText.Text = $"{temp:0}°F, {desc}";
-                            
-                            // Fade in weather panel
-                            var fadeIn = new DoubleAnimation(1, TimeSpan.FromSeconds(2));
-                            _weatherPanel.BeginAnimation(OpacityProperty, fadeIn);
-                        }
-                    });
+                // Build candidate location queries (e.g., "Monsey, NY" -> "Monsey, NY", "Monsey, US", "Monsey")
+                var queries = new List<string> { _settings.WeatherLocation.Trim() };
+                string raw = _settings.WeatherLocation.Trim();
+                if (raw.Contains(','))
+                {
+                    string city = raw.Split(',')[0].Trim();
+                    queries.Add($"{city},US");
+                    queries.Add(city);
+                }
+
+                string? json = null;
+                foreach (var query in queries.Distinct())
+                {
+                    try
+                    {
+                        string url = $"{protocol}://api.openweathermap.org/data/2.5/weather?q={Uri.EscapeDataString(query)}&appid={_settings.WeatherApiKey.Trim()}&units=imperial";
+                        json = await client.GetStringAsync(url);
+                        if (!string.IsNullOrEmpty(json)) break;
+                    }
+                    catch
+                    {
+                        // Try next candidate location format
+                    }
+                }
+
+                if (string.IsNullOrEmpty(json))
+                {
+                    App.Log($"Weather query failed for all candidate locations derived from '{_settings.WeatherLocation}'.");
+                    return;
+                }
+
+                var doc = JsonDocument.Parse(json);
+                double temp = doc.RootElement.GetProperty("main").GetProperty("temp").GetDouble();
+                string desc = doc.RootElement.GetProperty("weather")[0].GetProperty("main").GetString() ?? "";
+
+                Dispatcher.Invoke(() => {
+                    if (_weatherText != null && _weatherPanel != null)
+                    {
+                        _weatherText.Text = $"{temp:0}°F, {desc}";
+                        
+                        // Fade in weather panel
+                        var fadeIn = new DoubleAnimation(1, TimeSpan.FromSeconds(2));
+                        _weatherPanel.BeginAnimation(OpacityProperty, fadeIn);
+                    }
+                });
             }
             catch (Exception ex)
             {
