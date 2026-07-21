@@ -60,9 +60,13 @@ namespace AerialWindows
             }
             else
             {
-                // Fullscreen screensaver settings
-                Width = SystemParameters.PrimaryScreenWidth;
-                Height = SystemParameters.PrimaryScreenHeight;
+                // Fullscreen screensaver settings overscan
+                Left = -2;
+                Top = -2;
+                Width = SystemParameters.PrimaryScreenWidth + 4;
+                Height = SystemParameters.PrimaryScreenHeight + 4;
+                WindowStyle = WindowStyle.None;
+                ResizeMode = ResizeMode.NoResize;
                 Cursor = System.Windows.Input.Cursors.None;
             }
 

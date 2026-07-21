@@ -140,13 +140,14 @@ namespace AerialWindows
                 var window = new ScreensaverWindow(videoToPlay, cacheManager, settings, isPreviewMode: false);
                 _screensaverWindows.Add(window);
 
-                // Set window positions to cover the monitor bounds
-                window.Left = screen.Bounds.Left;
-                window.Top = screen.Bounds.Top;
-                window.Width = screen.Bounds.Width;
-                window.Height = screen.Bounds.Height;
+                // Set window positions to cover monitor bounds with 2px overscan to eliminate DWM top border lines
+                window.Left = screen.Bounds.Left - 2;
+                window.Top = screen.Bounds.Top - 2;
+                window.Width = screen.Bounds.Width + 4;
+                window.Height = screen.Bounds.Height + 4;
                 window.WindowState = WindowState.Normal;
                 window.WindowStyle = WindowStyle.None;
+                window.ResizeMode = ResizeMode.NoResize;
                 window.Topmost = true;
                 
                 window.Show();

@@ -6,12 +6,16 @@
         xmlns:local="clr-namespace:AerialWindows"
         mc:Ignorable="d"
         Title="Aerial Screensaver" Height="1080" Width="1920"
-        WindowStyle="None" WindowState="Maximized" Topmost="True"
+        WindowStyle="None" ResizeMode="NoResize" Topmost="True"
         Background="Black" Cursor="None" Icon="/logo.png"
         Loaded="Window_Loaded" 
         KeyDown="Window_KeyDown"
         MouseDown="Window_MouseDown"
         MouseMove="Window_MouseMove">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="0" GlassFrameThickness="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
 
     <Window.Resources>
         <!-- Dropshadow effect for overlay text readability -->
@@ -26,7 +30,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid Margin="-4">
         <!-- The background video player -->
         <MediaElement x:Name="Player" Stretch="UniformToFill" 
                       LoadedBehavior="Manual" UnloadedBehavior="Close" Volume="0.0"
