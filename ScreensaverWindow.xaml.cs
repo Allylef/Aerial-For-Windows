@@ -775,10 +775,17 @@ namespace AerialWindows
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (_isPreviewMode) return;
-            if (DateTime.Now - _startTime < TimeSpan.FromSeconds(2.0)) return;
 
             if (Win32.GetCursorPos(out Win32.POINT currentPhysicalPos))
             {
+                // During the first 5 seconds after startup, continuously update initial position to swallow cursor layout/focus shifts
+                if (DateTime.Now - _startTime < TimeSpan.FromSeconds(5.0))
+                {
+                    _initialPhysicalMousePos = currentPhysicalPos;
+                    _isPhysicalMouseSet = true;
+                    return;
+                }
+
                 if (!_isPhysicalMouseSet)
                 {
                     _initialPhysicalMousePos = currentPhysicalPos;
@@ -789,8 +796,8 @@ namespace AerialWindows
                 double deltaX = Math.Abs(currentPhysicalPos.X - _initialPhysicalMousePos.X);
                 double deltaY = Math.Abs(currentPhysicalPos.Y - _initialPhysicalMousePos.Y);
 
-                // Exits screensaver if mouse moved physically more than 30 pixels (highly robust to jitter/layout)
-                if (deltaX > 30 || deltaY > 30)
+                // Requires intentional physical mouse movement (> 100 pixels) to exit
+                if (deltaX > 100 || deltaY > 100)
                 {
                     App.Log($"Exit screensaver: Physical Mouse moved (DeltaX: {deltaX}, DeltaY: {deltaY})");
                     CloseAllAndShutdown();
