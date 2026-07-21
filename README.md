@@ -10,19 +10,6 @@
 
 ---
 
-## ⬇️ Download
-
-Download the full-performance, uncompressed self-contained release files below:
-
-| File | Description | Download Link |
-| :--- | :--- | :--- |
-| **`AerialWindows.scr`** | Recommended Windows Screensaver file (Right-click -> **Install**). | [📥 Download AerialWindows.scr (Google Drive)](#) |
-| **`AerialWindows.exe`** | Standalone Executable (Double-click to run anywhere). | [📥 Download AerialWindows.exe (Google Drive)](#) |
-
-> **Note:** Both files are full-performance, uncompressed single-file binaries (~180 MB) bundled with the full .NET runtime. No external .NET installation required!
-
----
-
 ## ✨ Features & Highlights
 
 ### 🎬 Video Libraries & Streaming
@@ -110,6 +97,19 @@ The published output directory will contain:
 1. Download `AerialWindows.scr` from your hosted link.
 2. **Right-click** `AerialWindows.scr` and select **Install**.
 3. Windows will open the *Screen Saver Settings* dialog with Aerial selected. Set your idle time and click **OK**!
+
+---
+
+## ⬇️ Download
+
+Download the full-performance, uncompressed self-contained release files below:
+
+| File | Description | Download Link |
+| :--- | :--- | :--- |
+| **`AerialWindows.scr`** | Recommended Windows Screensaver file (Right-click -> **Install**). | [📥 Download AerialWindows.scr (Google Drive)](https://drive.google.com/file/d/1FCa3ruqwrX195S_1gtNlrUiDScWDiNDR/view?usp=drive_link) |
+| **`AerialWindows.exe`** | Standalone Executable (Double-click to run anywhere). | [📥 Download AerialWindows.exe (Google Drive)](https://drive.google.com/file/d/1EfNhH6Wkw02nBayZwRb195YAiHNBGYH_/view?usp=drive_link) |
+
+> **Note:** Both files are full-performance, uncompressed single-file binaries (~180 MB) bundled with the full .NET runtime. No external .NET installation required!
 
 ---
 
