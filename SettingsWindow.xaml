@@ -708,8 +708,23 @@
                             </Grid>
                         </Border>
 
-                        <!-- Instant Play Shortcut Card -->
+                        <!-- Set Default Screensaver Card -->
                         <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,20,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Vertical" Margin="0,0,15,0">
+                                    <TextBlock Text="Set Aerial as Default Windows Screensaver" Foreground="{DynamicResource TextPrimary}" FontWeight="SemiBold" FontSize="13" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Updates your Windows registry so Aerial launches automatically when your computer becomes idle." FontSize="11" Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Button Content="Set as Default Screensaver" Grid.Column="1" Style="{StaticResource PrimaryButton}" VerticalAlignment="Center" Click="BtnSetDefaultScreensaver_Click" Padding="12,5"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Instant Play Shortcut Card -->
+                        <Border Background="{DynamicResource BgCard}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="15" Margin="0,15,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>

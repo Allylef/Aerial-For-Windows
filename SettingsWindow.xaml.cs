@@ -657,6 +657,32 @@ namespace AerialWindows
             }
         }
 
+        private void BtnSetDefaultScreensaver_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "";
+                string scrPath = Path.ChangeExtension(exePath, ".scr");
+                string targetPath = File.Exists(scrPath) ? scrPath : exePath;
+
+                using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
+                {
+                    if (key != null)
+                    {
+                        key.SetValue("SCRNSAVE.EXE", targetPath);
+                        key.SetValue("ScreenSaveActive", "1");
+                    }
+                }
+
+                MessageBox.Show($"Aerial for Windows has been set as your default Windows screensaver!\n\nTarget path registered:\n{targetPath}", "Default Screensaver Set", MessageBoxButton.OK, MessageBoxImage.Information);
+                TxtStatus.Text = "Registered as default Windows screensaver.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to set default screensaver in registry: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void BtnCreateShortcut_Click(object sender, RoutedEventArgs e)
         {
             try
